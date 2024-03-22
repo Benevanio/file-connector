@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="fileExample" format="json">
+      <types:shape format="weave" example="examples/customer.json"><![CDATA[%dw 2.0
+
+type fileExample = {|
+  fileName: String, 
+  customers: Array<{|    name: String,     email: String,     address: String  |}>
+|} {"example": "{\\\"fileName\\\":\\\"CustomersName\\\",\\\"customers\\\":[{\\\"name\\\":\\\"Maria Silva\\\",\\\"email\\\":\\\"maria.silva@example.com\\\",\\\"address\\\":\\\"123 Main Street, City, Country\\\"},{\\\"name\\\":\\\"Jo\u00E3o Santos\\\",\\\"email\\\":\\\"joao.santos@example.com\\\",\\\"address\\\":\\\"456 Elm Street, City, Country\\\"},{\\\"name\\\":\\\"Ana Oliveira\\\",\\\"email\\\":\\\"ana.oliveira@example.com\\\",\\\"address\\\":\\\"789 Oak Street, City, Country\\\"}]}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#135aaa44-9521-4a28-82de-4f3dc9f8d97b">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="fileExample"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#e640574f-3300-41f6-b079-d29ef80c259a">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="fileExample"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#645162a4-2db4-46fa-b03b-f0fb7b50f45b">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="fileExample"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#de44dfb4-bf73-4c7b-8a4e-db3a55765367">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="fileExample"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

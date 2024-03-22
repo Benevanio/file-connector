@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<flow name="create_new_file" doc:id="13d3a925-066b-4e2d-b946-2b460ea6b3e4" >
+		<http:listener doc:name="HTTP POST" doc:id="ffac1cb2-ee65-4727-b9a4-62da69f025a5" config-ref="HTTP_Listener_config" path="/writeFile" allowedMethods="POST"/>
+		<logger level="INFO" doc:name="Logger" doc:id="714d6067-88dc-4c32-b964-07ebfd8091f8" message="#[%dw 2.0&#10;output application/json&#10;---&#10;payload.fileName]"/>
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload.fileName]" doc:name="Set Variable" doc:id="568f01bc-dbdf-4323-b8ef-cd9c7ee98a59" variableName="nameOfFile"/>
+		<set-payload value='#[%dw 2.0
+output application/csv
+---
+payload.customers]' doc:name="Set Payload" doc:id="93882336-0485-471f-8623-acf1aafe2cf6" />
+		<file:write doc:name="Write" doc:id="7772cb62-f5a3-4bb1-a9b4-fd59572f7c35" config-ref="File_Config" path='#["write/" ++ vars.nameOfFile ++ ".csv"]'/>
+	</flow>
+	<flow name="poll_directory_for_new_files" doc:id="a852287a-148b-4bad-bac8-6124d1127609" >
+		<file:listener doc:name="pooll_directore" doc:id="b97d5585-7409-4efa-ba18-ee7c8177918b" config-ref="File_Config" directory="C:\Users\benev\Downloads\demo\write" moveToDirectory="C:\Users\benev\Downloads\demo\output" renameTo="customerToUpload">
+			<scheduling-strategy >
+				<fixed-frequency />
+			</scheduling-strategy>
+		</file:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="df65c445-706f-42be-96ca-355c9cb8eb5d" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"LastModifiedTime": attributes.lastModifiedTime,&#10;	"CreationTime": attributes.creationTime,&#10;	"FileName": attributes.fileName ++ " Added folder"&#10;}]'/>
+	</flow>
+	<flow name="Move_file_new_folder" doc:id="794c6e39-5dfe-40b7-9caf-a54084a4e2f3">
+		<http:listener doc:name="HTTP GET" doc:id="909ae342-6ad1-4a2e-a240-1821429c391a" config-ref="HTTP_Listener_config" path="/moveFile/{filename}" allowedMethods="GET" />
+		<file:move doc:name="Move File from one folder to another" doc:id="d8c2b097-7d20-448b-bace-d07eb6d90dff" sourcePath='#["write/" ++ attributes.uriParams.filename ++ ".csv"]' targetPath="read/" />
+		<logger level="INFO" doc:name="Logger" doc:id="8be834a3-a51a-419f-8819-6020a4f89574" message='#[%dw 2.0&#10;output application/json&#10;---&#10;"File Moved to a diferrent folder"]' />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;"File Moved to a diferrent folder" ++ payload]' doc:name="Set Payload" doc:id="550ac7cf-a1e7-4b5b-973c-38739fa4da7f" />
+	</flow>
+	<flow name="read_existing_files" doc:id="c2b758ff-a551-4a1b-a0ca-63477ab26dcd" >
+		<http:listener doc:name="HTTP" doc:id="ffda1cbc-7a3b-4e5e-8b83-920982fb595f" config-ref="HTTP_Listener_config" path="/readFiles/{fileName}" allowedMethods="GET"/>
+		<file:read doc:name="Read from File" doc:id="d7d6f3c3-fff8-417e-bc4a-ce93cc798426" path="C:\Users\benev\Downloads\demo\output\FL_insurance_sample.csv"/>
+		<logger level="INFO" doc:name="Logger" doc:id="38303e04-c5a7-4264-8297-585ca688d362" message="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]"/>
+		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Set Payload" doc:id="9eba7855-3491-4e9c-be98-aa78c0f354ec" />
+	</flow>
+	<flow name="list_files_and_folders" doc:id="e3480c2f-c42c-4fdc-b65d-7f8d7e5152d9" >
+		<http:listener doc:name="HTTP GET" doc:id="3f50d4d2-c0c3-49ae-b53a-e7bb20e29e88" config-ref="HTTP_Listener_config" path="/listFiles" allowedMethods="GET"/>
+		<file:list doc:name="List all filles" doc:id="25ecc087-765b-4f66-8080-f370ec177e6c" directoryPath="C:\Users\benev\Downloads\demo\output"/>
+		<logger level="INFO" doc:name="Logger" doc:id="6b59fa24-54aa-4d69-b459-42726efe2ba1" message="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]"/>
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"typePayload": typeOf(payload)&#10;}]' doc:name="Set Payload" doc:id="b5753acd-23ac-4104-b4e1-4e864b9b6a36" />
+	</flow>
+
+</mule>

@@ -1,0 +1,20 @@
+{
+  "fileName": "CustomersName",
+  "customers": [
+    {
+      "name": "Maria Silva",
+      "email": "maria.silva@example.com",
+      "address": "123 Main Street, City, Country"
+    },
+    {
+      "name": "João Santos",
+      "email": "joao.santos@example.com",
+      "address": "456 Elm Street, City, Country"
+    },
+    {
+      "name": "Ana Oliveira",
+      "email": "ana.oliveira@example.com",
+      "address": "789 Oak Street, City, Country"
+    }
+  ]
+}
